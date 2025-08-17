@@ -12,13 +12,12 @@ const Foreground = () => {
     tagColor: "#38bdf8" // Default: Sky Blue
   });
 
-  // Load from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("todos");
     if (saved) setTodos(JSON.parse(saved));
   }, []);
 
-  // Save to localStorage
+
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
@@ -73,7 +72,7 @@ const Foreground = () => {
             data={item}
             reference={ref}
             onDone={() => markDone(index)}
-            onRemove={() => removeTodo(index)}
+            onDelete={() => removeTodo(index)}
           />
         ))}
       </AnimatePresence>
@@ -88,52 +87,64 @@ const Foreground = () => {
       </motion.button>
 
       {/* Minimal Form */}
-      {showForm && (
+{showForm && (
+  <motion.div
+    initial={{ scale: 0.9, opacity: 0, y: 20 }}
+    animate={{ scale: 1, opacity: 1, y: 0 }}
+    exit={{ scale: 0.9, opacity: 0, y: 20 }}
+    transition={{ duration: 0.25, ease: "easeOut" }}
+    className="fixed bottom-24 right-6 p-5 rounded-3xl 
+               bg-white/20 backdrop-blur-2xl border border-white/30 
+               shadow-[0_8px_30px_rgba(0,0,0,0.2)] w-80"
+  >
+    {/* Heading */}
+    <h3 className="text-white/90 text-lg font-semibold mb-3 text-center">
+      New Task
+    </h3>
+
+    {/* Input */}
+    <input
+      type="text"
+      placeholder="What’s on your mind?"
+      value={formData.desc}
+      onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
+      className="w-full p-3 rounded-2xl bg-white/30 text-white placeholder-white/60 
+                 focus:outline-none focus:ring-2 focus:ring-blue-400/70 transition"
+    />
+
+    {/* Color Selector */}
+    <div className="flex justify-center gap-3 mt-4 mb-4">
+      {[
+        { name: "sky", value: "#38bdf8" },
+        { name: "green", value: "#22c55e" },
+        { name: "purple", value: "#a855f7" },
+        { name: "pink", value: "#ec4899" },
+        { name: "red", value: "#ef4444" },
+        { name: "orange", value: "#f97316" }
+      ].map((c) => (
         <motion.div
-          initial={{ scale: 0.8, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.8, opacity: 0, y: 20 }}
-          className="fixed bottom-24 right-6 p-4 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-lg w-72"
-        >
-          <input
-            type="text"
-            placeholder="What’s on your mind?"
-            value={formData.desc}
-            onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
-            className="w-full p-2 mb-3 rounded-lg bg-white/20 placeholder-white/60 text-white focus:outline-none"
-          />
+          key={c.name}
+          onClick={() => setFormData({ ...formData, tagColor: c.value })}
+          whileHover={{ scale: 1.15 }}
+          className={`w-7 h-7 rounded-full cursor-pointer border-2 ${
+            formData.tagColor === c.value ? "border-white" : "border-transparent"
+          }`}
+          style={{ backgroundColor: c.value }}
+        />
+      ))}
+    </div>
 
-          {/* Color Selector */}
-          <div className="flex gap-2 mb-3">
-            {[
-              { name: "sky", value: "#38bdf8" },    // Sky Blue
-              { name: "green", value: "#22c55e" },  // Green
-              { name: "purple", value: "#a855f7" }, // Purple
-              { name: "pink", value: "#ec4899" },   // Pink
-              { name: "red", value: "#ef4444" },    // Red
-              { name: "orange", value: "#f97316" }  // Orange
-            ].map((c) => (
-              <div
-                key={c.name}
-                onClick={() => setFormData({ ...formData, tagColor: c.value })}
-                className={`w-6 h-6 rounded-full cursor-pointer border-2 ${
-                  formData.tagColor === c.value
-                    ? "border-white"
-                    : "border-transparent"
-                }`}
-                style={{ backgroundColor: c.value }}
-              />
-            ))}
-          </div>
+    {/* Add Button */}
+    <button
+      onClick={addTodo}
+      className="w-full py-3 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 
+                 text-white font-semibold shadow-lg hover:opacity-90 transition"
+    >
+      Add Task
+    </button>
+  </motion.div>
+)}
 
-          <button
-            onClick={addTodo}
-            className="w-full py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
-          >
-            Add Task
-          </button>
-        </motion.div>
-      )}
     </div>
   );
 };
