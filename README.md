@@ -4,6 +4,7 @@
 A minimal **Todo App** built with **React + Vite + Tailwind + Framer Motion**.  
 Todos float around the screen and can be moved with the cursor.  
 
+![Floating Todos Demo](./client/src/assets/demo.png)
 ---
 
 ## Features
